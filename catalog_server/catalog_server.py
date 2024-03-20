@@ -96,6 +96,18 @@ def update_book(id):
     book.quantity = data.get('quantity', book.quantity)  # Update quantity instead of stock
     db.session.commit()
     return jsonify(book.serialize())  # Ensure you have a serialize method to convert the book object to a dictionary
+#search(topic)
+@app.route('/search/<string:topic>', methods=['GET'])
+def search_by_topic(topic):
+    books = Book.query.filter_by(topic=topic).all()
+    if books:
+        result = [{'id': book.id, 'title': book.title} for book in books]
+        return jsonify({'message': 'Books found', 'books': result}), 200
+    else:
+        return jsonify({'message': 'No books found for the given topic'}), 404
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5100)
