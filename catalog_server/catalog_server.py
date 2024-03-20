@@ -106,7 +106,18 @@ def search_by_topic(topic):
     else:
         return jsonify({'message': 'No books found for the given topic'}), 404
 
+#purchase(item_number)
+@app.route('/purchase/<int:id>', methods=['PUT'])
+def purchase_book(id):
+    book = Book.query.get(id)
+    if book is None:
+        return jsonify({'message': 'Book not found'}), 404
+    if book.quantity <= 0:
+        return jsonify({'message': 'Book out of stock'}), 400
 
+    book.quantity -= 1  # Decrement the stock
+    db.session.commit()  # Save the changes
+    return jsonify({'message': 'Purchase successful'}), 200
 
 
 if __name__ == '__main__':
